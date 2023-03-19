@@ -234,10 +234,11 @@ def main():
     # format for centroid output is [data points] [centroid coordinates] [centroid SSE] [centroid ID]
     centroids = bisecting_kmeans(list_data, k)
 
-    # display each centroid
+    # display each centroid with coordinates and SSE
     # for c in range(0, len(centroids)):
-    # (centroids[c])
-    # print()
+        # print ('centroid ' + str(c + 1) + ' coordinates: ' + str(centroids[c][1]))
+        # print('centroid ' + str(c + 1) + ' SSE: ' + str(centroids[c][2]))
+        # print()
 
     visualization()
 
