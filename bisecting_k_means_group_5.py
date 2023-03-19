@@ -18,7 +18,7 @@ def convert_data(con_data):
 
 
 # using silhouette method, determine 'k', written by Olivia Ryan
-def silhouette_meth(file):
+def silhouette_app(file):
     import csv
     # Read data from CSV file
     with open(file, newline='') as csvfile:
@@ -226,8 +226,8 @@ def main():
     # convert data to list for ease of usage
     list_data = clean_data.values.tolist()
 
-    #  TEMPORARY ASSIGNMENT FOR TESTING clusters from silhouette approach
-    k = silhouette_meth(filename)
+    #  find optimal 'k' from Olivia's silhouette approach
+    k = silhouette_app(filename)
     # ('k: ' + str(k))
     # print()
 
