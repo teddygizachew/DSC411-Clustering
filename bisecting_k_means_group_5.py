@@ -254,8 +254,8 @@ def main():
     list_data = clean_data.values.tolist()
 
     #  find optimal 'k' from Olivia's silhouette approach
-    # k = silhouette_app(list_data)
-    k = 5
+    k = silhouette_app(list_data)
+    # k = 5
     # print('k: ' + str(k))
     # print()
 
