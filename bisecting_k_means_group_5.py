@@ -198,7 +198,7 @@ def bisecting_kmeans(curr_data, k):
     return all_centroids
 
 
-def visualization(centroids, features):
+def visualization(centroids):
     # display each centroid with coordinates and SSE
     for c in range(0, len(centroids)):
         print('centroid ' + str(c + 1) + ' coordinates: ' + str(centroids[c][1]))
@@ -210,12 +210,21 @@ def visualization(centroids, features):
     z_axis = []
     centroid_label = []
 
+    # assign centroid labels to full length of datapoints
     for x in range(0, len(centroids)):
         for y in range(0, len(centroids[x][0])):
             x_axis.append(centroids[x][0][y][0])
             y_axis.append(centroids[x][0][y][1])
             z_axis.append(centroids[x][0][y][2])
             centroid_label.append(centroids[x][3])
+
+    # create dataframe of all the points for outputting
+    points = pd.DataFrame()
+    points['v1'] = x_axis
+    points['v2'] = y_axis
+    points['v3'] = z_axis
+    points['Centroid ID'] = centroid_label
+    print(points)
 
     # Output Silhouette Score
     # plt.plot(range(2, 10), silhouette_coefficients)
@@ -229,7 +238,7 @@ def visualization(centroids, features):
     ax.scatter3D(x_axis, y_axis, z_axis, c=centroid_label)
     plt.show()
 
-    # return 'Teddy, insert here'
+    return points
 
 
 def main():
@@ -255,7 +264,6 @@ def main():
 
     #  find optimal 'k' from Olivia's silhouette approach
     k = silhouette_app(list_data)
-    # k = 5
     # print('k: ' + str(k))
     # print()
 
@@ -266,13 +274,12 @@ def main():
     # kmeans = KMeans(n_clusters=k, init=centroids)
     # kmeans.fit(list_data)
 
-    # add cluster labels to the clean_data DataFrame
-    # clean_data['cluster'] = kmeans.labels_
+    # create visualization and add centroid labels to original dataset
+    output_data = visualization(centroids)
 
-    visualization(centroids, clean_data)
+    output_data.to_csv("output_cluster.csv", sep='\t')
 
 
 if __name__ == '__main__':
     main()
 
-# sampleKMeansData.csv
