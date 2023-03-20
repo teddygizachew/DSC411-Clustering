@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
 
 
 # convert categorical data to numeric
@@ -18,18 +20,9 @@ def convert_data(con_data):
 
 
 # using silhouette method, determine 'k', written by Olivia Ryan
-def silhouette_app(file):
-    import csv
-    # Read data from CSV file
-    with open(file, newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter='\t')
-        next(reader)  # skip header
-        data = []
-        for row in reader:
-            data.append([float(x) for x in row[0].split(',')])
-
+def silhouette_app(list_data):
     # Convert data to numpy array
-    data = np.array(data)
+    data = np.array(list_data)
 
     # Define function to calculate Euclidean distance
     def euclidean_distance(x1, x2):
@@ -120,7 +113,7 @@ def init_centroids(curr_data, k):
     return pd.concat(centroids, axis=1)
 
 
-# used to obtain labels for the simple_KMeans method
+# used to obtain labels for data points to clusters
 def get_labels(data, centroids):
     distances = centroids.apply(lambda x: np.sqrt(((data - x) ** 2).sum(axis=1)))
     return distances.idxmin(axis=1)
@@ -138,14 +131,15 @@ def simple_KMeans(curr_data):
     max_iterations = 10
 
     pd_DataFrame_data = pd.DataFrame(curr_data, columns=['v1', 'v2', 'v3'])
-    next_centroids = init_centroids(pd_DataFrame_data, 2)
+    model = KMeans(n_clusters=2, init="k-means++").fit(curr_data)
+    next_centroids = model.cluster_centers_
     old_centroids = pd.DataFrame()
     iteration = 1
 
-    while iteration < max_iterations and not next_centroids.equals(old_centroids):
-        old_centroids = next_centroids
+    while iteration < max_iterations and not next_centroids == old_centroids:
+        old_centroids = model.cluster_centers_
 
-        labels = get_labels(pd_DataFrame_data, next_centroids)
+        labels = model.labels_
         next_centroids = new_centroids(pd_DataFrame_data, labels, 2)
 
     centroids.append(next_centroids.iloc[:, 0].values.tolist())
@@ -170,10 +164,11 @@ def bisecting_kmeans(curr_data, k):
         new_centroid2 = []
 
         # find 2 new centroids
-        centroids = simple_KMeans(split_centroid)
+        model = KMeans(n_clusters=2, init="k-means++").fit(split_centroid)
+        centroids = model.cluster_centers_
 
         # assign data points to each centroid
-        labels = assign_centroid(split_centroid, centroids)
+        labels = model.labels_
 
         # add data to each new cluster based on cluster labels
         for j in range(0, len(labels)):
@@ -203,13 +198,45 @@ def bisecting_kmeans(curr_data, k):
     return all_centroids
 
 
-def visualization():
-    return 'Teddy, insert here'
+def visualization(centroids, features):
+    # display each centroid with coordinates and SSE
+    for c in range(0, len(centroids)):
+        print('centroid ' + str(c + 1) + ' coordinates: ' + str(centroids[c][1]))
+        print('centroid ' + str(c + 1) + ' SSE: ' + str(centroids[c][2]))
+        print()
+
+    x_axis = []
+    y_axis = []
+    z_axis = []
+    centroid_label = []
+
+    for x in range(0, len(centroids)):
+        for y in range(0, len(centroids[0])):
+            x_axis.append(centroids[x][0][y][0])
+            y_axis.append(centroids[x][0][y][1])
+            z_axis.append(centroids[x][0][y][2])
+            centroid_label.append(centroids[x][3])
+
+    # Output Silhouette Score
+    # plt.plot(range(2, 10), silhouette_coefficients)
+    # plt.xlabel("Number of clusters")
+    # plt.ylabel("Silhouette Score")
+    # plt.show()
+
+    plt.figure(figsize=(12, 10))
+    ax = plt.axes(projection="3d")
+    plt.title("Cluster Assignments")
+    ax.scatter3D(x_axis, y_axis, z_axis, c=centroid_label)
+    plt.show()
+
+    # return 'Teddy, insert here'
 
 
 def main():
     # get data file name from user
     filename = input("Enter the filename for clustering: ")
+    # for testing purposes
+    # filename = "sampleKMeansData.csv"
     data = pd.read_csv(filename)
 
     # create a second dataframe for operations to keep the original intact
@@ -227,21 +254,25 @@ def main():
     list_data = clean_data.values.tolist()
 
     #  find optimal 'k' from Olivia's silhouette approach
-    k = silhouette_app(filename)
-    # ('k: ' + str(k))
+    # k = silhouette_app(list_data)
+    k = 5
+    # print('k: ' + str(k))
     # print()
 
     # format for centroid output is [data points] [centroid coordinates] [centroid SSE] [centroid ID]
     centroids = bisecting_kmeans(list_data, k)
 
-    # display each centroid with coordinates and SSE
-    # for c in range(0, len(centroids)):
-        # print ('centroid ' + str(c + 1) + ' coordinates: ' + str(centroids[c][1]))
-        # print('centroid ' + str(c + 1) + ' SSE: ' + str(centroids[c][2]))
-        # print()
+    # run KMeans with the optimal k and initial centroids from bisecting KMeans
+    # kmeans = KMeans(n_clusters=k, init=centroids)
+    # kmeans.fit(list_data)
 
-    visualization()
+    # add cluster labels to the clean_data DataFrame
+    # clean_data['cluster'] = kmeans.labels_
+
+    visualization(centroids, clean_data)
 
 
 if __name__ == '__main__':
     main()
+
+# sampleKMeansData.csv
