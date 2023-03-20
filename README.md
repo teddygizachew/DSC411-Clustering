@@ -14,5 +14,7 @@ The program outputs a printout of the centroids and the SSE. We also return the 
 
 - [@teddygizachew](https://github.com/teddygizachew)
 
+- [@oliviaryan]()
+
 
 
