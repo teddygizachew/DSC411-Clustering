@@ -9,7 +9,7 @@ The program outputs a printout of the centroids and the SSE. We also return the 
 
 # Visualization
 
-visualization<img width="318" alt="image" src="https://user-images.githubusercontent.com/60460297/226241067-5a4d5371-b98a-4121-aa3c-2c653f9ba0b2.png">
+<img width="318" alt="image" src="https://user-images.githubusercontent.com/60460297/226241067-5a4d5371-b98a-4121-aa3c-2c653f9ba0b2.png">
 
 ## Authors
 
