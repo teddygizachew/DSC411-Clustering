@@ -211,7 +211,7 @@ def visualization(centroids, features):
     centroid_label = []
 
     for x in range(0, len(centroids)):
-        for y in range(0, len(centroids[0])):
+        for y in range(0, len(centroids[x][0])):
             x_axis.append(centroids[x][0][y][0])
             y_axis.append(centroids[x][0][y][1])
             z_axis.append(centroids[x][0][y][2])
